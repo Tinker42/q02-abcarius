@@ -22,6 +22,14 @@
 **/
 Piezas::Piezas()
 {
+    std::vector<Piece> row;
+    turn = X;
+    for(int i=0; i<BOARD_ROWS; i++){
+        board.push_back(row);
+        for(int j=0; j<BOARD_COLS; j++){
+            board[i].push_back(Blank);
+        }
+    }
 }
 
 /**
@@ -30,6 +38,11 @@ Piezas::Piezas()
 **/
 void Piezas::reset()
 {
+    for(int i=0; i<BOARD_ROWS; i++){
+        for(int j=0; j<BOARD_COLS; j++){
+            board[i][j]=Blank;
+        }
+    }
 }
 
 /**
@@ -42,7 +55,45 @@ void Piezas::reset()
 **/ 
 Piece Piezas::dropPiece(int column)
 {
-    return Blank;
+    if(pieceAt(0,column)==Blank){
+        board[0][column]=turn;
+        if(turn==X){
+            turn=O;
+        }else if(turn==O){
+            turn=O;
+        }
+        return board[0][column];
+    }else if(pieceAt(1,column)==Blank){
+        board[1][column]=turn;
+        if(turn==X){
+            turn=O;
+        }else if(turn==O){
+            turn=O;
+        }
+        return board[1][column];
+    }else if(pieceAt(2,column)==Blank){
+        board[2][column]=turn;
+        if(turn==X){
+            turn=O;
+        }else if(turn==O){
+            turn=O;
+        }
+        return board[2][column];
+    }else if(pieceAt(2,column)==Invalid){
+        if(turn==X){
+            turn=O;
+        }else if(turn==O){
+            turn=O;
+        }
+        return Invalid;
+    }else{
+        if(turn==X){
+            turn=O;
+        }else if(turn==O){
+            turn=O;
+        }
+        return Blank;
+    }
 }
 
 /**
@@ -51,7 +102,13 @@ Piece Piezas::dropPiece(int column)
 **/
 Piece Piezas::pieceAt(int row, int column)
 {
-    return Blank;
+    if(row>=BOARD_ROWS||column>=BOARD_COLS){
+        return Invalid;
+    }else if(board[row][column]!=X||board[row][column]!=O){
+        return Blank;
+    }else{
+        return board[row][column];
+    }
 }
 
 /**
@@ -65,5 +122,79 @@ Piece Piezas::pieceAt(int row, int column)
 **/
 Piece Piezas::gameState()
 {
-    return Blank;
+    //Piece curWinner=Blank;
+    Piece lastPiece=Blank;
+    int highCountX=1;
+    int highCountO=1;
+    int numConsec=1;
+    
+    if(board[0][0]==' '||board[0][1]==' '||board[0][2]==' '||board[0][3]==' '||board[1][0]==' '||board[1][1]==' '||board[1][2]==' '||board[1][3]==' '||board[2][0]==' '||board[2][1]==' '||board[2][2]==' '||board[2][3]==' '){//empty cell
+        return Invalid;
+    }else{
+        for(int i=0;i<BOARD_ROWS;i++){//checks each row for consecutive pieces
+            lastPiece=Blank;
+            numConsec=1;
+            for(int j=0;j<BOARD_COLS;j++){
+                if(lastPiece==board[i][j]){
+                    numConsec++;
+                    if(lastPiece==X && numConsec>highCountX){
+                        highCountX=numConsec;
+                    }else if(lastPiece==O && numConsec>highCountO){
+                        highCountO=numConsec;
+                    }
+                }else{
+                    lastPiece=board[i][j];
+                    numConsec=1;
+                }
+            }
+        }
+        
+        for(int i=0;i<BOARD_COLS;i++){//checks each col for consecutive pieces
+            lastPiece=Blank;
+            numConsec=1;
+            for(int j=0;j<BOARD_ROWS;j++){
+                if(lastPiece==board[j][i]){
+                    numConsec++;
+                    if(lastPiece==X && numConsec>highCountX){
+                        highCountX=numConsec;
+                    }else if(lastPiece==O && numConsec>highCountO){
+                        highCountO=numConsec;
+                    }
+                }else{
+                    lastPiece=board[j][i];
+                    numConsec=1;
+                }
+            }
+        }
+        
+        /*if((board[0][0]==board[0][1]&&board[0][1]==board[0][2]&&board[0][2]==board[0][3])){//row 1
+            if(board[0][0]==X){
+                highCountX=4;
+            }else if(board[0][0]==O){
+                highCountO=4;
+            }
+        }
+        if((board[1][0]==board[1][1]&&board[1][1]==board[1][2]&&board[1][2]==board[1][3])){//row 2
+            if(board[1][0]==X){
+                highCountX=4;
+            }else if(board[1][0]==O){
+                highCountO=4;
+            }
+        }
+        if((board[2][0]==board[2][1]&&board[2][1]==board[2][2]&&board[2][2]==board[2][3])){//row 3
+            if(board[2][0]==X){
+                highCountX=4;
+            }else if(board[2][0]==O){
+                highCountO=4;
+            }
+        }*/
+        
+        if(highCountX==highCountO){
+            return Blank;
+        }else if(highCountX>highCountX){
+            return X;
+        }else if(highCountX<highCountO){
+            return O;
+        }
+    }
 }
